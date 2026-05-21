@@ -117,7 +117,7 @@ WHERE department_id = 1 AND budget > 30000000;
 
 -- CÂU 2: 
 SELECT employee_id, full_name, email FROM Employees
-WHERE (hire_date BETWEEN '2022-01-01' AND '2022-12-31') AND email LIKE '%@gmail.com%';
+WHERE (hire_date BETWEEN '2022-01-01' AND '2022-12-31') AND email LIKE '%@gmail.com';
 
 -- CÂU 3:
 SELECT employee_id, full_name, salary FROM Employees
