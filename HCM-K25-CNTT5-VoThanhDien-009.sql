@@ -26,8 +26,7 @@ CREATE TABLE Employee_Details (
     employee_id INT UNIQUE,
     citizen_id VARCHAR(15) UNIQUE NOT NULL,
     address VARCHAR(255) NOT NULL,
-    working_status ENUM('Active', 'Inactive'),
-    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+    working_status ENUM('Active', 'Inactive')
 );
 
 -- BẢNG 3: Departments
@@ -43,8 +42,7 @@ CREATE TABLE Projects (
     project_name VARCHAR(255) NOT NULL,
     department_id INT,
     budget DECIMAL(10,2),
-    project_status ENUM('Pending', 'Doing', 'Done'),
-    FOREIGN KEY (department_id) REFERENCES Departments(department_id)
+    project_status ENUM('Pending', 'Doing', 'Done')
 );
 
 -- BẢNG 5: Work_Assignments
@@ -54,10 +52,18 @@ CREATE TABLE Work_Assignments (
     project_id INT,
     start_date DATE NOT NULL,
     deadline DATE NOT NULL,
-    completed_date DATE,
-    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
-    FOREIGN KEY (project_id) REFERENCES Projects(project_id)
+    completed_date DATE
 );
+
+ALTER TABLE Employee_Details
+ADD CONSTRAINT fk_employee_detail_employees FOREIGN KEY (employee_id) REFERENCES Employees(employee_id);
+
+ALTER TABLE Projects
+ADD CONSTRAINT fk_projects_departments FOREIGN KEY (department_id) REFERENCES Departments(department_id);
+
+ALTER TABLE Work_Assignments
+ADD CONSTRAINT fk_work_assignments_employees FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
+ADD CONSTRAINT fk_work_assignments_project_id  FOREIGN KEY (project_id) REFERENCES Projects(project_id);
 
 -- PHẦN 2: DML - INSERT, DELETE, UPDATE
 -- CÂU 1: INSERT
@@ -161,8 +167,10 @@ AFTER INSERT ON Work_Assignments
 FOR EACH ROW
 BEGIN
 
-    SET project_status = 'Doing';
-    
+	UPDATE Projects
+    SET project_status = 'Doing'
+    WHERE project_id = project_id;	
+
 END$$
 DELIMITER ;
 
