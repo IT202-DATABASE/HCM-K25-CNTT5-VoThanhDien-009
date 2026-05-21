@@ -189,4 +189,18 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- PHẦN 7: STORE PROCEDURE
+-- CÂU 1:
+DELIMITER $$
+CREATE PROCEDURE sp_check_project_budget(p_project_id, OUT p_message) 
+BEGIN
+	
+		IF budget < 20000000 SET p_message = 'Ngân sách thấp'
+			ELSEIF budget BETWEEN 20000000 AND 40000000 SET p_message = 'Ngân sách trung bình'
+			ELSE SET p_message = 'Ngân sách cao'
+        END IF;
+        
+END$$
+DELIMITER ;
+
 	
