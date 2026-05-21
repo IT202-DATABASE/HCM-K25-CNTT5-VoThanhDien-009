@@ -130,3 +130,58 @@ SELECT d.department_name, SUM(p.budget) AS total_budget FROM Projects p
 JOIN Departments d ON d.department_id = p.department_id
 WHERE p.budget > 40000000
 GROUP BY d.department_id;
+
+-- CÂU 3:
+SELECT e.employee_id, e.full_name, ed.working_status FROM Employees e
+JOIN Employee_Details ed ON ed.employee_id = e.employee_id
+WHERE ed.working_status = 'Active' AND e.employee_id NOT IN 
+(SELECT w.employee_id FROM Work_Assignments w 
+    JOIN Projects P on w.project_id = p.project_id 
+    WHERE p.budget > 40000000);
+
+-- PHẦN 5: INDEX & VIEW 
+-- CÂU 1:
+CREATE INDEX idx_assignment_dates ON Work_Assignments(start_date, completed_date);
+
+-- CÂU 2:
+DROP VIEW IF EXISTS vw_overdue_assignments;
+CREATE VIEW vw_overdue_assignments AS
+SELECT w.assignment_id, e.full_name, p.project_name, w.start_date, w.deadline FROM Work_Assignments w
+JOIN Employees e ON e.employee_id = w.employee_id
+JOIN Projects p ON p.project_id = w.project_id
+WHERE (p.project_status = 'Pending' OR p.project_status = 'Doing') AND w.deadline > CURDATE();
+
+SELECT * FROM vw_overdue_assignments;
+
+-- PHẦN 6: TRIGGER
+-- CÂU 1: 
+DELIMITER $$
+CREATE TRIGGER trg_after_assignment_insert 
+AFTER INSERT ON Work_Assignments
+FOR EACH ROW
+BEGIN
+
+	UPDATE Projects
+    SET project_status = 'Doing'
+    WHERE project_id = project_id;	
+
+END$$
+DELIMITER ;
+
+-- CÂU 2:
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_prevent_delete_employee;
+CREATE TRIGGER trg_prevent_delete_employee
+BEFORE DELETE ON Employees
+FOR EACH ROW
+BEGIN
+    
+	IF completed_date IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Không thể xóa nhân viên này vì còn công việc chưa hoàn thành';
+	END IF;
+
+END$$
+DELIMITER ;
+
+	
