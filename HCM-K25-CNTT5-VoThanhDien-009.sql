@@ -176,9 +176,8 @@ DELIMITER ;
 
 -- CÂU 2:
 DELIMITER $$
-DROP TRIGGER IF EXISTS trg_prevent_delete_employee;
 CREATE TRIGGER trg_prevent_delete_employee
-BEFORE DELETE ON Employees
+BEFORE DELETE ON Work_Assignments
 FOR EACH ROW
 BEGIN
     
