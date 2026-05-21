@@ -169,7 +169,7 @@ BEGIN
 
 	UPDATE Projects
     SET project_status = 'Doing'
-    WHERE project_id = project_id;	
+    WHERE NEW.project_id = project_id;	
 
 END$$
 DELIMITER ;
@@ -182,7 +182,7 @@ BEFORE DELETE ON Employees
 FOR EACH ROW
 BEGIN
     
-	IF completed_date IS NULL THEN
+	IF OLD.completed_date IS NULL THEN
 		SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Không thể xóa nhân viên này vì còn công việc chưa hoàn thành';
 	END IF;
