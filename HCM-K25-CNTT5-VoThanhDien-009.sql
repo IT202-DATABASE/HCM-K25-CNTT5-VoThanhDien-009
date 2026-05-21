@@ -161,10 +161,8 @@ AFTER INSERT ON Work_Assignments
 FOR EACH ROW
 BEGIN
 
-	UPDATE Projects
-    SET project_status = 'Doing'
-    WHERE project_id = project_id;	
-
+    SET project_status = 'Doing';
+    
 END$$
 DELIMITER ;
 
